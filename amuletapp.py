@@ -4,6 +4,7 @@ from threading import Thread
 import subprocess
 import time
 from pyamf import sol
+import sys
 app=wx.App(False)
 frame1=MyFrame2(None)
 frame2=MyFrame1(None)
@@ -28,33 +29,38 @@ def showframe(event):
 	frame2.Show()
 def hideframe(event):
 	frame2.Hide()
-def killprocess(pid):
+def killprocess(pid,tried=False):
 	startupinfo = subprocess.STARTUPINFO()
 	startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 	p=subprocess.Popen(["TASKKILL","/F","/T","/pid",str(pid)],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,startupinfo=startupinfo)
+	if not tried:
+		wx.CallLater(1000,killprocess,pid,True)
 def killall():
 	startupinfo = subprocess.STARTUPINFO()
 	startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 	p=subprocess.Popen(["TASKKILL","/F","/T","/im","amulet.exe"],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,startupinfo=startupinfo)
-def checkprocess():
+def checkprocess(pid):
 	global lastupdate,amuletprocess
 	try:
-		if (frame1.m_button2.GetLabel())=='Spin':
+		if (frame1.m_button2.GetLabel())=='Start':
+			return
+		if (amuletprocess.pid)!=pid:
+			killprocess(pid)
 			return
 		if (time.time()-lastupdate)>30:
 			killprocess(amuletprocess.pid)
 			wx.CallLater(100,execspin,None)
 			return
-		wx.CallLater(1000,checkprocess)
+		wx.CallLater(1000,checkprocess,pid)
 	except:
-		wx.CallLater(1000,checkprocess)
+		wx.CallLater(1000,checkprocess,pid)
 def fff(comm):
 	global lastupdate,amuletprocess,itemsarray
 	startupinfo = subprocess.STARTUPINFO()
 	startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
 	amuletprocess=subprocess.Popen(comm,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,startupinfo=startupinfo)
 	lastupdate=time.time()
-	wx.CallAfter(checkprocess)
+	wx.CallAfter(checkprocess,(amuletprocess.pid))
 	for p in amuletprocess.stdout:
 		lastupdate=time.time()
 		if "GOODITEM" in p:
@@ -94,9 +100,13 @@ def execspin(event):
 		execspin(0)
 		return
 	server=frame1.m_textCtrl1.GetValue()
-	Thread(target=fff,args=(['python2','amulet.py',server,("||".join(lists))],)).start()
+	Thread(target=fff,args=(['amulet.exe',server,("||".join(lists))],)).start()
+def onclose(event):
+	killall()
+	sys.exit()
 frame1.m_button2.Bind(wx.EVT_BUTTON,execspin)
 frame1.m_button1.Bind(wx.EVT_BUTTON,showframe)
+frame1.Bind(wx.EVT_CLOSE,onclose)
 frame2.Bind(wx.EVT_CLOSE,hideframe)
 frame1.Show()
 app.MainLoop()

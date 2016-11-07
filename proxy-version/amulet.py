@@ -73,6 +73,7 @@ def createacc(server,itemsarray,proxy=None,proxytype='HTTP',useclient=None,callb
 			g.write(email)
 			g.write('\n')
 			g.close()
+		return x
 	except:
 		try:
 			x.close()
@@ -84,7 +85,7 @@ def _stamulet(server,itemsarray,proxy=None,proxytype='HTTP',useclient=None,callb
 	while x!=None:
 		if checksource!=None:
 			if checksource.killsignal:
-				return
+				break
 		x=createacc(server,itemsarray,proxy,proxytype,useclient,callback,timeout=timeout)
 		useclient=x
 	totalrunning[0]-=1

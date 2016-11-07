@@ -1,1 +1,1 @@
-Download the zip file and run amuletapp.exe to use it.
+Download the rar file, extract it and run amuletapp.exe to use it.

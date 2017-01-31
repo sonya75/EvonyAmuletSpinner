@@ -10,7 +10,7 @@ You will need to install python 2.7.x(the latest one is 2.7.13, but using any py
 
 `` pip install pyamf ``
 
-The second one, you can download the wheel file from here:- https://wxpython.org/Phoenix/snapshot-builds/ . Download the proper one for your system and install it. Then you can run the app by running marketproxy.py
+The second one, you can download the wheel file from here:- https://wxpython.org/Phoenix/snapshot-builds/ . Download the proper one for your system and install it. Then you can run the app by running amuletapp.py
 
 # Using the executable file to run it:-
 

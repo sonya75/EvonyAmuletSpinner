@@ -107,7 +107,9 @@ class Client:
 			return self.registerresponse
 		self.registered=True
 		self.client.sendmessage('login.play.without.registration',{})
-		response=self.responsehandler('server.UnregisteredCreatePlayerResponse')
+		response=self.responsehandler('server.UnregisteredCreatePlayerResponse',checkok=False)
+		if len(response['data']['player']['castles'])==0:
+			raise Exception
 		self.registerresponse=response
 		if ((email=='')&(pwd=='')):
 			return response
